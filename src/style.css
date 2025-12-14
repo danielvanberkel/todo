@@ -1,0 +1,289 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+:root {
+    --prominent: #c90303;
+    --prominent-darker: #970202;
+    --high-prio: var(--prominent);
+    --medium-prio: #d07f1c;
+    --light-grey: #e0e1e9;
+}
+
+.prominent {
+    color: var(--prominent);
+}
+
+/* ICONS */
+.material-symbols-rounded {
+    color: #585e64;
+    font-variation-settings:
+    'wght' 300
+}
+
+.material-symbols-rounded.prominent {
+    color: var(--prominent);
+    filter: drop-shadow(0 0 7px rgba(0,0,0,0.3));
+}
+
+.material-symbols-rounded.filled {
+    font-variation-settings:
+    'FILL' 1,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+a {
+    text-decoration: none;
+    color: #222;
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+aside li.active {
+    font-weight: 500;
+    background-color: rgb(232, 218, 215);
+}
+
+aside li {
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+aside li,
+.accessories {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+aside li:hover {
+    color: var(--prominent);
+    font-weight: 600;
+}
+
+#container {
+    display: grid;
+    grid-template-rows: 50px 1fr;
+    grid-template-columns: 1fr 4fr;
+    height: 100vh;
+}
+
+#top-bar {
+    background-color: #a43131;
+    grid-column: 1 / -1;
+    padding: 0px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#top-bar .icon-button {
+    font-size: 1.05rem;
+}
+
+#top-bar .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.5rem;
+}
+
+#top-bar .logo .material-symbols-rounded {
+    font-size: 2rem;
+}
+
+#top-bar * {
+    color: white;
+}
+
+aside {
+    background-color: rgb(252, 248, 247);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+aside ul {
+    list-style: none;
+}
+
+main, aside {
+    padding: 40px;
+}
+
+main h1 {
+    margin-bottom: 24px;
+}
+
+h2 {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+}
+
+main h2 {
+    margin-bottom: 12px;
+}
+
+.tasks {
+    padding-bottom: 20px;
+}
+
+.task {
+    display: flex;
+    border-top: 1px solid var(--light-grey);
+    padding: 10px;
+    justify-content: space-between;
+}
+
+.task-content {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+input[type="radio"] {
+    height: 1.5em;
+    width: 1.5em;
+}
+
+button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+button.icon-button {
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    padding: 5px 10px;
+    color: white;
+}
+
+button.icon-button:hover {
+    font-weight: 600;
+}
+
+button.primary,
+button.secondary {
+    border: 1px solid var(--light-grey);
+    border-radius: 4px;
+    padding: 12px;
+}
+
+button.primary {
+    color: #fff;
+    background-color: var(--prominent);
+}
+
+button.primary:hover {
+    background-color: var(--prominent-darker);
+}
+
+button.secondary:hover {
+    background-color: #f5f5f5;
+}
+
+.icon-button .material-symbols-rounded {
+    color: white;
+    padding-right: 5px;
+}
+
+.priority {
+    font-size: 0.7em;
+    background-color: rgb(198, 198, 198);
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.priority.high,
+.priority.medium {
+    color: white;
+}
+
+.priority.high {
+    background-color: var(--high-prio);
+    color: white;
+}
+
+.priority.medium {
+    background-color: var(--medium-prio);
+}
+
+dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    border-radius: 12px;
+    border: 1px solid rgb(208, 208, 208);
+    min-width: 40vw;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.modal-header p {
+    font-size: 1.2em;
+    font-weight: 500;
+}
+
+dialog > * {
+    padding: 18px;
+}
+
+.form-col {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+#add-task-form {
+    display: flex;
+    gap: 18px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+input,
+textarea,
+select {
+    padding: 8px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 1px solid var(--prominent-darker);
+    border-radius: 3px;
+}
