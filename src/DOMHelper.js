@@ -51,8 +51,6 @@ export const DOMHelper = (function() {
     const makeToDoItemDiv = function(item, listId) {
         // Create containers
         const taskDiv = createElem("div", { class: "task" });
-        taskDiv.dataset.listId = listId;
-        taskDiv.dataset.itemId = item.id;
 
         const taskContentDiv = createElem("div", { class: "task-content"});
         const accessoriesDiv = createElem("div", { class: "accessories"});
@@ -60,12 +58,17 @@ export const DOMHelper = (function() {
         // Task Content Div
         const completeButton = createElem("input", { attributes: { 
             type: "checkbox", 
-            id: "complete", 
-            name: "complete"
+            name: "complete",
         } 
         });
+        completeButton.checked = item.complete;
+        completeButton.addEventListener("change", () => {
+            DataHelper.toggleItemComplete(item);
+        })
         
         const toDoTitle = createElem("p", { text: item.title});
+        
+        if (item.complete) toDoTitle.classList.add("complete")
         
         const priorityLabel = createElem("span", { 
             class: ["priority", `${item.priority.toLowerCase()}`], 
@@ -109,13 +112,19 @@ export const DOMHelper = (function() {
         return taskDiv;
     }
 
-    const makeListElem = function(listName) {
+    const makeListElem = function(list) {
         const listItem = createElem("li");
+        listItem.dataset.listId = list.id;
+
         const span = createElem("span", { class: "material-symbols-rounded", text: "tag" } );
-        const name = createElem("p", { text: listName });
+        const name = createElem("p", { text: list.name });
+
+        listItem.addEventListener("click", () => {
+            NavigationHelper.setList(list.id, list.name);
+            displayCurrentPage();
+        });
 
         listItem.append(span, name);
-
         return listItem;
     }
 
@@ -132,6 +141,14 @@ export const DOMHelper = (function() {
 
         const addTaskConfirmButton = ELEMS.BUTTONS.MODAL_CONFIRM_ADD_TASK;
         addTaskConfirmButton.addEventListener("click", newTaskConfirmClickHandler)
+
+        const taskModal = document.querySelector(".add-edit-task-modal");
+        taskModal.querySelector(".close").addEventListener("click", () => taskModal.close());
+        taskModal.querySelector(".cancel").addEventListener("click", () => taskModal.close());
+
+        const listModal = document.querySelector(".add-edit-list-modal");
+        listModal.querySelector(".close").addEventListener("click", () => listModal.close());
+        listModal.querySelector(".cancel").addEventListener("click", () => listModal.close());
     }
 
     const newTaskClickHandler = function() {
@@ -165,28 +182,11 @@ export const DOMHelper = (function() {
 
     // Modals
     const openModal = function(modalClassName, modalTitle, confirmButtonText) {
-        const initModal = function() {
-            const dialog = document.querySelector(modalClassName);
+        const dialog = document.querySelector(modalClassName);
 
-            const titleElem = dialog.querySelector(".modal-header p");
-            titleElem.textContent = modalTitle;
-
-            dialog.querySelector(".close")
-                .addEventListener("click", () => dialog.close());
-
-            dialog.querySelector(".cancel")
-                .addEventListener("click", () => dialog.close());
-
-            dialog.querySelector(".confirm-action")
-                .textContent = confirmButtonText;
+        dialog.querySelector(".modal-header p").textContent = modalTitle;
+        dialog.querySelector(".confirm-action").textContent = confirmButtonText;
             
-            dialog.querySelector(".confirm-action")
-                .addEventListener("click", () => dialog.close());
-                
-            return dialog;
-        }
-        
-        const dialog = initModal();
         dialog.showModal();
     }
 
@@ -244,7 +244,7 @@ export const DOMHelper = (function() {
         listsUl.textContent = '';
         
         for (const list of DataHelper.getLists()) {
-            const li = makeListElem(list.name);
+            const li = makeListElem(list);
             listsUl.prepend(li);
         }
     }
@@ -274,36 +274,51 @@ export const DOMHelper = (function() {
 
     const displayCurrentPage = function() {
         const currentPage = NavigationHelper.getCurrentPage();
+        const listContainer = ELEMS.LISTS_CONTAINER;
+        listContainer.textContent = '';
 
-        switch (currentPage) {
-            case NavigationHelper.PAGES.today:
-                displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.TODAY));
-                break;
-            case NavigationHelper.PAGES.upcoming:
-                displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.UPCOMING));
-                break;
-            case NavigationHelper.PAGES.inbox:
-                displayItemsOfAllLists(DataHelper.getLists());
-                break;
-            default:
-                break;
+        // Check if it's a list or a page
+        if (currentPage.type === "list") {
+            const listId = NavigationHelper.getCurrentListId();
+            const lists = DataHelper.getLists(DataHelper.FILTERS.LIST_ID, listId);
+            displayItemsOfAllLists(lists);
+        } else {
+            switch (currentPage) {
+                case NavigationHelper.PAGES.today:
+                    displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.TODAY));
+                    break;
+                case NavigationHelper.PAGES.upcoming:
+                    displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.UPCOMING));
+                    break;
+                case NavigationHelper.PAGES.inbox:
+                    displayItemsOfAllLists(DataHelper.getLists(), listId);
+                    break;
+                default:
+                    break;
+            }
         }
 
         // Set active styling
         const page_links = document.querySelectorAll(".page-link");
-        const currentPageId = document.querySelector(`#${currentPage.id}`).id
-
         page_links.forEach(page => {
-            if (page.id === currentPageId) {
+            if (page.id === currentPage.id) {
                 page.classList.add("active");
             } else {
                 page.classList.remove("active");
             }
         });
 
+        // Also handle list styling
+        const listItems = document.querySelectorAll("#lists li");
+        listItems.forEach(li => li.classList.remove("active"));
+
+        if (currentPage.type = "list") {
+            const activeListItem = document.querySelector(`#lists li[data-list-id="${NavigationHelper.getCurrentListId()}"]`);
+            if (activeListItem) activeListItem.classList.add("active");
+        }
+
         // Set page title
-        const title = ELEMS.PAGE.TITLE;
-        title.textContent = currentPage.title;
+        ELEMS.PAGE.TITLE.textContent = currentPage.title;
     }
 
     const init = function () {

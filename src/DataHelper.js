@@ -42,10 +42,14 @@ export const DataHelper = (function() {
         list.addItem(itemObj);
     }
 
-    const editItemInList = function (item) {
+    const editItemInList = function(item) {
         const list = lists.find(l => l.id === item.listId);
-        const itemObj = new ToDoItem(item.title, item.description, item.dueDate, item.priority);
+        const itemObj = new ToDoItem(item.title, item.description, item.dueDate, item.priority, item.taskId);
         list.editItem(itemObj);
+    }
+
+    const toggleItemComplete = function(item) {
+        item.toggleComplete();
     }
 
     const deleteItemFromList = function(item, listId) {
@@ -97,6 +101,7 @@ export const DataHelper = (function() {
         editItemInList, 
         deleteItemFromList, 
         formatDate, 
-        formatDateForInput 
+        formatDateForInput,
+        toggleItemComplete
     }
 })();

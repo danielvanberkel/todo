@@ -150,6 +150,10 @@ main h2 {
     align-items: center;
 }
 
+.task-content p .complete {
+    text-decoration: line-through;
+}
+
 input[type="radio"] {
     height: 1.5em;
     width: 1.5em;
