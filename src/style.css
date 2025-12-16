@@ -105,6 +105,12 @@ aside li:hover {
     color: white;
 }
 
+#top-bar .controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 aside {
     background-color: rgb(252, 248, 247);
     display: flex;
@@ -150,7 +156,7 @@ main h2 {
     align-items: center;
 }
 
-.task-content p .complete {
+.task-content p.complete {
     text-decoration: line-through;
 }
 

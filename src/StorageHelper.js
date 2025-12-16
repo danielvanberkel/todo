@@ -1,3 +1,5 @@
+import { ToDoList } from "./ToDoList";
+
 export const StorageHelper = (function() {
     const STORAGE_KEY = "toDoLists";
 
@@ -7,9 +9,17 @@ export const StorageHelper = (function() {
 
     const loadLists = function() {
         const data = localStorage.getItem(STORAGE_KEY);
-        return data ? JSON.parse(data) : null;
+        if (!data) return null;
+
+        const plainObjects = JSON.parse(data);
+
+        return plainObjects.map(listData => ToDoList.fromJSON(listData));
     }
 
-    return { saveLists, loadLists }
+    const clearStorage = function() {
+        localStorage.clear();
+    }
+    
+    return { saveLists, loadLists, clearStorage }
 
 })();

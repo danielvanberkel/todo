@@ -8,6 +8,19 @@ export class ToDoItem {
         this.complete = complete;
     }
 
+    static fromJSON(data) {
+        const item = new ToDoItem(
+            data.title,
+            data.description,
+            data.dueDate,
+            data.priority,
+            data.complete,
+            data.id
+        );
+        
+        return item;
+    }
+
     static PriorityLevel = Object.freeze({
         LOW: "LOW",
         MEDIUM: "MEDIUM",

@@ -1,9 +1,10 @@
+import { StorageHelper } from "./StorageHelper.js";
 import { ToDoItem } from "./ToDoItem.js";
 import { ToDoList } from "./ToDoList.js";
 import { DateTime } from "luxon";
 
 export const DataHelper = (function() {
-    let lists = [ToDoList.defaultList];
+    let lists = StorageHelper.loadLists() ?? [ToDoList.defaultList];
 
     const FILTERS = {
         TODAY: "TODAY",
@@ -30,31 +31,37 @@ export const DataHelper = (function() {
     const createList = function(name) {
         const list = new ToDoList(name);
         lists.push(list);
+        StorageHelper.saveLists(lists);
     }
 
     const deleteList = function(list) {
         lists = lists.filter(l => l.id !== list.id);
+        StorageHelper.saveLists(lists);
     }
 
     const addItemToList = function(item) {
         const list = lists.find(l => l.id === item.listId);
-        const itemObj = new ToDoItem(item.title, item.description, item.dueDate, item.priority);
+        const itemObj = new ToDoItem(item.title, item.description, item.dueDate, item.priority, item.complete);
         list.addItem(itemObj);
+        StorageHelper.saveLists(lists);
     }
 
     const editItemInList = function(item) {
         const list = lists.find(l => l.id === item.listId);
-        const itemObj = new ToDoItem(item.title, item.description, item.dueDate, item.priority, item.taskId);
+        const itemObj = new ToDoItem(item.title, item.description, item.dueDate, item.priority, item.complete, item.taskId);
         list.editItem(itemObj);
+        StorageHelper.saveLists(lists);
     }
 
     const toggleItemComplete = function(item) {
         item.toggleComplete();
+        StorageHelper.saveLists(lists);
     }
 
     const deleteItemFromList = function(item, listId) {
         const list = lists.find(l => l.id === listId);
         list.deleteItem(item);
+        StorageHelper.saveLists(lists);
     }
 
     const isToday = function(date) {

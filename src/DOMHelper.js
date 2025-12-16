@@ -1,5 +1,6 @@
 import { DataHelper } from "./DataHelper";
 import { NavigationHelper } from "./NavigationHelper.js";
+import { StorageHelper } from "./StorageHelper.js";
 
 export const DOMHelper = (function() {
     // Constants
@@ -59,6 +60,7 @@ export const DOMHelper = (function() {
         const completeButton = createElem("input", { attributes: { 
             type: "checkbox", 
             name: "complete",
+            id: `complete-${item.id}`
         } 
         });
         completeButton.checked = item.complete;
@@ -130,6 +132,9 @@ export const DOMHelper = (function() {
 
     // Event Handlers
     const initializeListeners = function() {
+        const clearStorageButton = document.querySelector("#clear-storage");
+        clearStorageButton.addEventListener("click", StorageHelper.clearStorage);
+
         const addTaskButton = ELEMS.BUTTONS.ADD_TASK;
         addTaskButton.addEventListener("click", newTaskClickHandler);
 
@@ -167,6 +172,7 @@ export const DOMHelper = (function() {
 
         displayCurrentPage();
         emptyTaskDetailFields();
+        document.querySelector(".add-edit-task-modal").close();
     }   
 
     const newListClickHandler = function(event) {
@@ -178,6 +184,7 @@ export const DOMHelper = (function() {
         const name = ELEMS.LIST_NAME.value;
         DataHelper.createList(name);
         displayLists();
+        document.querySelector(".add-edit-list-modal").close();
     }
 
     // Modals
@@ -283,18 +290,12 @@ export const DOMHelper = (function() {
             const lists = DataHelper.getLists(DataHelper.FILTERS.LIST_ID, listId);
             displayItemsOfAllLists(lists);
         } else {
-            switch (currentPage) {
-                case NavigationHelper.PAGES.today:
-                    displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.TODAY));
-                    break;
-                case NavigationHelper.PAGES.upcoming:
-                    displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.UPCOMING));
-                    break;
-                case NavigationHelper.PAGES.inbox:
-                    displayItemsOfAllLists(DataHelper.getLists(), listId);
-                    break;
-                default:
-                    break;
+            if (currentPage.id === "today") {
+                displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.TODAY));
+            } else if (currentPage.id === "upcoming") {
+                displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.UPCOMING));
+            } else if (currentPage.id === "inbox") {
+                displayItemsOfAllLists(DataHelper.getLists());
             }
         }
 
@@ -312,7 +313,7 @@ export const DOMHelper = (function() {
         const listItems = document.querySelectorAll("#lists li");
         listItems.forEach(li => li.classList.remove("active"));
 
-        if (currentPage.type = "list") {
+        if (currentPage.type === "list") {
             const activeListItem = document.querySelector(`#lists li[data-list-id="${NavigationHelper.getCurrentListId()}"]`);
             if (activeListItem) activeListItem.classList.add("active");
         }
