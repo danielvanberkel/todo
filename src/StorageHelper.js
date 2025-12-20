@@ -1,11 +1,9 @@
-import { EventBus } from "./EventBus";
+import { STORAGE_KEYS } from "./constants";
 import { ToDoList } from "./ToDoList";
 
 export const StorageHelper = (function() {
-    const STORAGE_KEY = "toDoLists";
-
     const saveLists = function(lists) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(lists));
+        localStorage.setItem(STORAGE_KEYS.LISTS, JSON.stringify(lists));
     }
 
     const loadLists = function() {

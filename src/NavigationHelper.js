@@ -1,4 +1,5 @@
 import { EventBus } from "./EventBus";
+import { PAGE_TYPES, EVENTS } from "./constants";
 
 export const NavigationHelper = (function() {
     const PAGES = {
@@ -6,19 +7,19 @@ export const NavigationHelper = (function() {
             id: "inbox",
             title: "Inbox",
             icon: "inbox",
-            type: "page"
+            type: PAGE_TYPES.page
         },
         today: { // Shows only tasks for the current date
             id: "today",
             title: "Today",
             icon: "today",
-            type: "page"
+            type: PAGE_TYPES.page
         },
         upcoming: { // Shows only task in the future
             id: "upcoming",
             title: "Upcoming",
             icon: "calendar_month",
-            type: "page"
+            type: PAGE_TYPES.page
         }
     }
 
@@ -31,17 +32,17 @@ export const NavigationHelper = (function() {
     const setPage = function(pageId) {
         currentPage = PAGES[pageId];
         currentListId = null;
-        EventBus.emit('page-changed');
+        EventBus.emit(EVENTS.PAGE_CHANGED);
     }
 
     const setList = function(listId, listName) {
         currentPage = {
             id: `list-${listId}`,
             title: listName,
-            type: "list"
+            type: PAGE_TYPES.LIST
         };
         currentListId = listId;
-        EventBus.emit('page-changed');
+        EventBus.emit(EVENTS.PAGE_CHANGED);
     }
 
     const listenToPageClick = function() {

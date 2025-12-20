@@ -1,3 +1,4 @@
+import { FILTER_TYPES } from "./constants.js";
 import { StorageHelper } from "./StorageHelper.js";
 import { ToDoItem } from "./ToDoItem.js";
 import { ToDoList } from "./ToDoList.js";
@@ -6,11 +7,7 @@ import { DateTime } from "luxon";
 export const DataHelper = (function() {
     let lists = StorageHelper.loadLists() ?? [ToDoList.defaultList];
 
-    const FILTERS = {
-        TODAY: "TODAY",
-        UPCOMING: "UPCOMING",
-        LIST_ID: "LIST_ID"
-    }
+    const FILTERS = FILTER_TYPES;
 
     const getLists = function(itemFilter, listId) {
         if (itemFilter === FILTERS.TODAY) {

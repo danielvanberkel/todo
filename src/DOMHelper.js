@@ -1,3 +1,4 @@
+import { EVENTS, MODALS } from "./constants.js";
 import { DataHelper } from "./DataHelper";
 import { EventBus } from "./EventBus.js";
 import { NavigationHelper } from "./NavigationHelper.js";
@@ -135,7 +136,7 @@ export const DOMHelper = (function() {
         const clearStorageButton = document.querySelector("#clear-storage");
         clearStorageButton.addEventListener("click", () => {
             DataHelper.clearAllData();
-            EventBus.emit('page-changed');
+            EventBus.emit(EVENTS.PAGE_CHANGED);
         });
 
         const addTaskButton = ELEMS.BUTTONS.ADD_TASK;
@@ -161,7 +162,7 @@ export const DOMHelper = (function() {
 
     const newTaskClickHandler = function() {
         populateListsSelector();
-        openModal(".add-edit-task-modal", "New To Do", "Add");
+        openModal(MODALS.TASK, "New To Do", "Add");
     }
 
     const newTaskConfirmClickHandler = function() {
@@ -173,21 +174,21 @@ export const DOMHelper = (function() {
             DataHelper.addItemToList(itemObj);
         }
 
-        EventBus.emit('page-changed')
+        EventBus.emit(EVENTS.PAGE_CHANGED)
         emptyTaskDetailFields();
-        document.querySelector(".add-edit-task-modal").close();
+        document.querySelector((MODALS.TASK).close();
     }   
 
     const newListClickHandler = function(event) {
         event.preventDefault();
-        openModal(".add-edit-list-modal", "New List", "Create");
+        openModal(MODALS.LIST, "New List", "Create");
     }
 
     const newListConfirmClickHandler = function() {
         const name = ELEMS.LIST_NAME.value;
         DataHelper.createList(name);
         displayLists();
-        document.querySelector(".add-edit-list-modal").close();
+        document.querySelector(MODALS.LIST).close();
     }
 
     // Modals
@@ -338,7 +339,7 @@ export const DOMHelper = (function() {
     }
 
     const init = function () {
-        EventBus.on('page-changed', displayCurrentPage); // Register displayCurrentPage() to be executed when 'page-changed' is emitted.
+        EventBus.on(EVENTS.PAGE_CHANGED, displayCurrentPage); // Register displayCurrentPage() to be executed when 'page-changed' is emitted.
         displayCurrentPage();
         displayLists();
         initializeListeners();

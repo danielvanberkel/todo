@@ -1,3 +1,5 @@
+import { PRIORITY_LEVELS } from "./constants";
+
 export class ToDoItem {
     constructor(title, description, dueDate, priority, complete = false, id = crypto.randomUUID()) {
         this.id = id;
@@ -21,21 +23,15 @@ export class ToDoItem {
         return item;
     }
 
-    static PriorityLevel = Object.freeze({
-        LOW: "LOW",
-        MEDIUM: "MEDIUM",
-        HIGH: "HIGH"
-    })
-
-    static dummy = new ToDoItem("Test item", "This is a test item.", Date.now(), this.PriorityLevel.MEDIUM, true);
-    static dummy2 = new ToDoItem("Test item 2", "This is a test item.", Date.now(), this.PriorityLevel.HIGH, false);
+    static dummy = new ToDoItem("Test item", "This is a test item.", Date.now(), PRIORITY_LEVELS.MEDIUM, true);
+    static dummy2 = new ToDoItem("Test item 2", "This is a test item.", Date.now(), PRIORITY_LEVELS.HIGH, false);
 
     toggleComplete() {
         this.complete = !this.complete;
     }
 
     changePriority(newLevel) {
-        if (newLevel in PriorityLevel) {
+        if (Object.values(PRIORITY_LEVELS).includes(newLevel)) {
             this.priority = newLevel;
         }
     }
