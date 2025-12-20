@@ -7,7 +7,7 @@ export const StorageHelper = (function() {
     }
 
     const loadLists = function() {
-        const data = localStorage.getItem(STORAGE_KEY);
+        const data = localStorage.getItem(STORAGE_KEYS.LISTS);
         if (!data) return null;
 
         const plainObjects = JSON.parse(data);

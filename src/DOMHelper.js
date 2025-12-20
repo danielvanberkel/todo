@@ -176,7 +176,7 @@ export const DOMHelper = (function() {
 
         EventBus.emit(EVENTS.PAGE_CHANGED)
         emptyTaskDetailFields();
-        document.querySelector((MODALS.TASK).close();
+        document.querySelector(MODALS.TASK).close();
     }   
 
     const newListClickHandler = function(event) {
