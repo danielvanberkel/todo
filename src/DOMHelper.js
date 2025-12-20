@@ -1,4 +1,5 @@
 import { DataHelper } from "./DataHelper";
+import { EventBus } from "./EventBus.js";
 import { NavigationHelper } from "./NavigationHelper.js";
 import { StorageHelper } from "./StorageHelper.js";
 
@@ -66,6 +67,7 @@ export const DOMHelper = (function() {
         completeButton.checked = item.complete;
         completeButton.addEventListener("change", () => {
             DataHelper.toggleItemComplete(item);
+            EventBus.emit('page-changed')
         })
         
         const toDoTitle = createElem("p", { text: item.title});
@@ -92,7 +94,6 @@ export const DOMHelper = (function() {
         editButton.addEventListener("click", () => {
             openModal(".add-edit-task-modal", "Edit To Do", "Confirm Changes");
             populateTaskDetailFields(item, listId);
-            console.log(item.dueDate);
         });
         
         const deleteButton = createElem("button");
@@ -103,7 +104,7 @@ export const DOMHelper = (function() {
         deleteButton.appendChild(deleteIcon);
         deleteButton.addEventListener("click", () => {
             DataHelper.deleteItemFromList(item, listId);
-            displayCurrentPage();
+            EventBus.emit('page-changed')
         });
 
         // Append to containers
@@ -123,7 +124,6 @@ export const DOMHelper = (function() {
 
         listItem.addEventListener("click", () => {
             NavigationHelper.setList(list.id, list.name);
-            displayCurrentPage();
         });
 
         listItem.append(span, name);
@@ -133,7 +133,10 @@ export const DOMHelper = (function() {
     // Event Handlers
     const initializeListeners = function() {
         const clearStorageButton = document.querySelector("#clear-storage");
-        clearStorageButton.addEventListener("click", StorageHelper.clearStorage);
+        clearStorageButton.addEventListener("click", () => {
+            DataHelper.clearAllData();
+            EventBus.emit('page-changed');
+        });
 
         const addTaskButton = ELEMS.BUTTONS.ADD_TASK;
         addTaskButton.addEventListener("click", newTaskClickHandler);
@@ -170,7 +173,7 @@ export const DOMHelper = (function() {
             DataHelper.addItemToList(itemObj);
         }
 
-        displayCurrentPage();
+        EventBus.emit('page-changed')
         emptyTaskDetailFields();
         document.querySelector(".add-edit-task-modal").close();
     }   
@@ -279,50 +282,63 @@ export const DOMHelper = (function() {
         }
     }
 
-    const displayCurrentPage = function() {
-        const currentPage = NavigationHelper.getCurrentPage();
-        const listContainer = ELEMS.LISTS_CONTAINER;
-        listContainer.textContent = '';
+    const clearMainContent = function() {
+        ELEMS.LISTS_CONTAINER.textContent = '';
+    }
 
-        // Check if it's a list or a page
-        if (currentPage.type === "list") {
-            const listId = NavigationHelper.getCurrentListId();
-            const lists = DataHelper.getLists(DataHelper.FILTERS.LIST_ID, listId);
-            displayItemsOfAllLists(lists);
-        } else {
-            if (currentPage.id === "today") {
-                displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.TODAY));
-            } else if (currentPage.id === "upcoming") {
-                displayItemsOfAllLists(DataHelper.getLists(DataHelper.FILTERS.UPCOMING));
-            } else if (currentPage.id === "inbox") {
-                displayItemsOfAllLists(DataHelper.getLists());
-            }
-        }
+    const updatePageTitle = function(title) {
+        ELEMS.PAGE.TITLE.textContent = title;
+    }
 
-        // Set active styling
+    const updateActivePageLink = function(pageId) {
         const page_links = document.querySelectorAll(".page-link");
         page_links.forEach(page => {
-            if (page.id === currentPage.id) {
-                page.classList.add("active");
-            } else {
-                page.classList.remove("active");
-            }
+            page.classList.toggle("active", page.id === pageId);
         });
+    }
 
-        // Also handle list styling
+    const updateActiveListLink = function(listId) {
         const listItems = document.querySelectorAll("#lists li");
         listItems.forEach(li => li.classList.remove("active"));
 
-        if (currentPage.type === "list") {
-            const activeListItem = document.querySelector(`#lists li[data-list-id="${NavigationHelper.getCurrentListId()}"]`);
+        if (listId) {
+            const activeListItem = document.querySelector(`#lists li[data-list-id="${listId}"]`);
             if (activeListItem) activeListItem.classList.add("active");
         }
+    }
 
-        // Set page title
-        ELEMS.PAGE.TITLE.textContent = currentPage.title;
+    const getDataForCurrentPage = function() {
+        const currentPage = NavigationHelper.getCurrentPage();
+       
+        if (currentPage.type === "list") {
+            const listId = NavigationHelper.getCurrentListId();
+            return DataHelper.getLists(DataHelper.FILTERS.LIST_ID, listId);
+        }
+
+        const filterMap = Object.freeze({
+            today: DataHelper.FILTERS.TODAY,
+            upcoming: DataHelper.FILTERS.UPCOMING,
+            inbox: null
+        });
+
+        const filter = filterMap[currentPage.id];
+        return filter ? DataHelper.getLists(filter) : DataHelper.getLists();
+    }
+
+    const displayCurrentPage = function() {
+        const currentPage = NavigationHelper.getCurrentPage();
+
+        clearMainContent();
+        updatePageTitle(currentPage.title);
+        updateActivePageLink(currentPage.id);
+        updateActiveListLink(currentPage.type === "list" ? NavigationHelper.getCurrentListId(): null);
+
+        const lists = getDataForCurrentPage();
+        displayItemsOfAllLists(lists);
     }
 
     const init = function () {
+        EventBus.on('page-changed', displayCurrentPage); // Register displayCurrentPage() to be executed when 'page-changed' is emitted.
         displayCurrentPage();
         displayLists();
         initializeListeners();

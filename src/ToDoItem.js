@@ -17,7 +17,7 @@ export class ToDoItem {
             data.complete,
             data.id
         );
-        
+
         return item;
     }
 
@@ -32,8 +32,6 @@ export class ToDoItem {
 
     toggleComplete() {
         this.complete = !this.complete;
-        console.log(`item changed:`);
-        console.log(this);
     }
 
     changePriority(newLevel) {

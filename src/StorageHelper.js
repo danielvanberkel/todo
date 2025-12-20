@@ -1,3 +1,4 @@
+import { EventBus } from "./EventBus";
 import { ToDoList } from "./ToDoList";
 
 export const StorageHelper = (function() {
@@ -15,11 +16,7 @@ export const StorageHelper = (function() {
 
         return plainObjects.map(listData => ToDoList.fromJSON(listData));
     }
-
-    const clearStorage = function() {
-        localStorage.clear();
-    }
     
-    return { saveLists, loadLists, clearStorage }
+    return { saveLists, loadLists }
 
 })();

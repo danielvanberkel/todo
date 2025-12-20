@@ -1,4 +1,4 @@
-import { DOMHelper } from "./DOMHelper";
+import { EventBus } from "./EventBus";
 
 export const NavigationHelper = (function() {
     const PAGES = {
@@ -31,6 +31,7 @@ export const NavigationHelper = (function() {
     const setPage = function(pageId) {
         currentPage = PAGES[pageId];
         currentListId = null;
+        EventBus.emit('page-changed');
     }
 
     const setList = function(listId, listName) {
@@ -40,6 +41,7 @@ export const NavigationHelper = (function() {
             type: "list"
         };
         currentListId = listId;
+        EventBus.emit('page-changed');
     }
 
     const listenToPageClick = function() {
@@ -48,7 +50,6 @@ export const NavigationHelper = (function() {
             page.addEventListener("click", (event) => {
                 // Set current page variable
                 setPage(page.id);
-                DOMHelper.displayCurrentPage();
             });
         });
     }

@@ -12,6 +12,24 @@ export const DataHelper = (function() {
         LIST_ID: "LIST_ID"
     }
 
+    const getLists = function(itemFilter, listId) {
+        if (itemFilter === FILTERS.TODAY) {
+            return lists.map(list => ({ 
+                ...list,
+                items: list.items.filter(item => isToday(item.dueDate))
+            }))
+        } else if (itemFilter === FILTERS.UPCOMING) {
+            return lists.map(list => ({ 
+                ...list,
+                items: list.items.filter(item => isFuture(item.dueDate))
+            }))
+        } else if (itemFilter === FILTERS.LIST_ID && arguments.length === 2) {
+            return lists.filter(list => list.id === listId)
+        } else {
+            return lists
+        }
+    }
+
     const getListNameByID = (listId) => lists.find(l => l.id === listId).name;
 
     const formatDate = function(date) {
@@ -79,22 +97,9 @@ export const DataHelper = (function() {
         return new Date(date).setHours(0,0,0,0) > new Date().setHours(0,0,0,0);
     }
 
-    const getLists = function(itemFilter, listId) {
-        if (itemFilter === FILTERS.TODAY) {
-            return lists.map(list => ({ 
-                ...list,
-                items: list.items.filter(item => isToday(item.dueDate))
-            }))
-        } else if (itemFilter === FILTERS.UPCOMING) {
-            return lists.map(list => ({ 
-                ...list,
-                items: list.items.filter(item => isFuture(item.dueDate))
-            }))
-        } else if (itemFilter === FILTERS.LIST_ID && arguments.length === 2) {
-            return lists.filter(list => list.id === listId)
-        } else {
-            return lists
-        }
+    const clearAllData = function() {
+        lists = [ToDoList.defaultList];
+        StorageHelper.saveLists(lists);
     }
 
     return { 
@@ -109,6 +114,7 @@ export const DataHelper = (function() {
         deleteItemFromList, 
         formatDate, 
         formatDateForInput,
-        toggleItemComplete
+        toggleItemComplete,
+        clearAllData
     }
 })();
