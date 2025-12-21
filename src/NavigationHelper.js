@@ -7,19 +7,19 @@ export const NavigationHelper = (function() {
             id: "inbox",
             title: "Inbox",
             icon: "inbox",
-            type: PAGE_TYPES.page
+            type: PAGE_TYPES.PAGE
         },
         today: { // Shows only tasks for the current date
             id: "today",
             title: "Today",
             icon: "today",
-            type: PAGE_TYPES.page
+            type: PAGE_TYPES.PAGE
         },
         upcoming: { // Shows only task in the future
             id: "upcoming",
             title: "Upcoming",
             icon: "calendar_month",
-            type: PAGE_TYPES.page
+            type: PAGE_TYPES.PAGE
         }
     }
 

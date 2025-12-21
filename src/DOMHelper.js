@@ -1,4 +1,4 @@
-import { EVENTS, MODALS } from "./constants.js";
+import { CONFIRM_MESSAGES, EVENTS, MODALS } from "./constants.js";
 import { DataHelper } from "./DataHelper";
 import { EventBus } from "./EventBus.js";
 import { NavigationHelper } from "./NavigationHelper.js";
@@ -68,7 +68,7 @@ export const DOMHelper = (function() {
         completeButton.checked = item.complete;
         completeButton.addEventListener("change", () => {
             DataHelper.toggleItemComplete(item);
-            EventBus.emit('page-changed')
+            EventBus.emit(EVENTS.PAGE_CHANGED);
         })
         
         const toDoTitle = createElem("p", { text: item.title});
@@ -105,7 +105,7 @@ export const DOMHelper = (function() {
         deleteButton.appendChild(deleteIcon);
         deleteButton.addEventListener("click", () => {
             DataHelper.deleteItemFromList(item, listId);
-            EventBus.emit('page-changed')
+            EventBus.emit(EVENTS.PAGE_CHANGED);
         });
 
         // Append to containers
@@ -135,8 +135,10 @@ export const DOMHelper = (function() {
     const initializeListeners = function() {
         const clearStorageButton = document.querySelector("#clear-storage");
         clearStorageButton.addEventListener("click", () => {
-            DataHelper.clearAllData();
-            EventBus.emit(EVENTS.PAGE_CHANGED);
+            if (confirm(CONFIRM_MESSAGES.CLEAR_ALL_DATA)) {
+                DataHelper.clearAllData();
+                EventBus.emit(EVENTS.PAGE_CHANGED);
+            }
         });
 
         const addTaskButton = ELEMS.BUTTONS.ADD_TASK;

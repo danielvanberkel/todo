@@ -1,7 +1,3 @@
-export const X = Object.freeze({
-
-});
-
 // Page and navigation types 
 export const PAGE_TYPES = Object.freeze({
     PAGE: 'page',
@@ -54,6 +50,7 @@ export const ERROR_MESSAGES = Object.freeze({
 export const CONFIRM_MESSAGES = Object.freeze({
     DELETE_TASK: 'Are you sure you want to delete this task?',
     DELETE_LIST: 'Are you sure you want to delete this list? All tasks in it will be deleted.',
+    CLEAR_ALL_DATA: '⚠️ This will delete ALL your tasks and lists. Are you sure?'
 });
 
 // Form field limits
